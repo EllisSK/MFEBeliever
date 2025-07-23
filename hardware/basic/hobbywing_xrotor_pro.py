@@ -1,6 +1,9 @@
 import machine as m
 import utime as t
 
-class HobbywingXRotorPro:
+class HobbywingXRotorPro(m.PWM):
     def __init__(self, pwm_pin: int):
-        pass
+        super().__init__(
+            dest=m.Pin(pwm_pin),
+            freq=50
+        )
