@@ -20,16 +20,44 @@ This file should contain two loops running simultaneously, one to handle basic f
 """
 
 #Enter calibration values below:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
+LEFT_ESC_PIN = None
+RIGHT_ESC_PIN = 1
+LEFT_AILERON_PIN = None
+RIGHT_AILERON_PIN = None
+LEFT_RUDDERVATOR_PIN = None
+RIGHT_RUDDERVATOR_PIN = None
+PARACHUTE_PIN = None
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-controller = JumperT15()
-left_esc = HobbywingXRotorPro()
-right_esc = HobbywingXRotorPro()
-left_aileron = EmaxES3504()
-right_aileron = EmaxES3504()
-left_ruddervator = EmaxES3504()
-right_ruddervator = EmaxES3504()
-parachute = EmaxES08MDII()
+#Initialising basic hardware::~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+controller = JumperT15(
+
+)
+left_esc = HobbywingXRotorPro(
+    
+)
+right_esc = HobbywingXRotorPro(
+
+)
+left_aileron = EmaxES3504(
+
+)
+right_aileron = EmaxES3504(
+
+)
+left_ruddervator = EmaxES3504(
+
+)
+right_ruddervator = EmaxES3504(
+
+)
+parachute = EmaxES08MDII(
+
+)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#Initialising sensor hardware::~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#For future use
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
