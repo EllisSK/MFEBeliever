@@ -3,10 +3,11 @@ import utime as t
 import _thread as mt
 
 from hardware import (
-    JumperT15,
+    SpeedyBeeNanoELRS,
     HobbywingXRotorPro,
     EmaxES3504,
     EmaxES08MDII,
+    HolybroPM02v3,
     HCSR04,
     ICM20948,
     LPS28DFW,
@@ -20,9 +21,9 @@ This file should contain two loops running simultaneously, one to handle basic f
 """
 
 #Enter calibration values below:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-CONTROLLER_UART_CHIP = None
-CONTROLLER_TX_PIN = None
-CONTROLLER_RX_PIN = None
+TRANSCEIVER_UART_ID = None
+TRANSCEIVER_TX_PIN = None
+TRANSCEIVER_RX_PIN = None
 LEFT_ESC_PIN = None
 RIGHT_ESC_PIN = None
 LEFT_AILERON_PIN = None
@@ -30,13 +31,15 @@ RIGHT_AILERON_PIN = None
 LEFT_RUDDERVATOR_PIN = None
 RIGHT_RUDDERVATOR_PIN = None
 PARACHUTE_PIN = None
+V_SENS_PIN = None
+I_SENS_PIN = None
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #Initialising basic hardware::~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-controller = JumperT15(
-    chip=CONTROLLER_UART_CHIP,
-    tx_pin=CONTROLLER_TX_PIN,
-    rx_pin=CONTROLLER_RX_PIN
+transceiver = SpeedyBeeNanoELRS(
+    uart_id=TRANSCEIVER_UART_ID,
+    tx_pin=TRANSCEIVER_TX_PIN,
+    rx_pin=TRANSCEIVER_RX_PIN
 )
 left_esc = HobbywingXRotorPro(
     pwm_pin=LEFT_ESC_PIN
@@ -58,6 +61,10 @@ right_ruddervator = EmaxES3504(
 )
 parachute = EmaxES08MDII(
     pwm_pin=PARACHUTE_PIN
+)
+power_module = HolybroPM02v3(
+    v_sens = V_SENS_PIN,
+    i_sens = I_SENS_PIN
 )
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
