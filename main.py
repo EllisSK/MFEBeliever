@@ -14,6 +14,12 @@ from hardware import (
     UbloxNeoM9N
 )
 
+from software import (
+    ArmState,
+    FlightState,
+    ConnectionState
+)
+
 """
 This is the main file which will control the drone! 
 Other modules should create objects for different sensors and classes with methods for automated flight functions.
