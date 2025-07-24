@@ -20,12 +20,6 @@ from software import (
     ConnectionState
 )
 
-"""
-This is the main file which will control the drone! 
-Other modules should create objects for different sensors and classes with methods for automated flight functions.
-This file should contain two loops running simultaneously, one to handle basic flight control and the other to handle autopilot and sensor arithmetic.
-"""
-
 #Enter calibration values below:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 TRANSCEIVER_UART_ID = None
 TRANSCEIVER_TX_PIN = None
@@ -75,9 +69,24 @@ power_module = HolybroPM02v3(
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #Initialising sensor hardware:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+imu = ICM20948(
+    
+)
+gnss = UbloxNeoM9N(
 
-#For future use
+)
+barometer = LPS28DFW(
 
+)
+ultrasonic = HCSR04(
+
+)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+#Initialising state variables:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+isArmed = ArmState.DISARMED
+isConnected = ConnectionState.DISCONNECTED
+flightMode = FlightState.GROUNDED
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 #Main loop:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
