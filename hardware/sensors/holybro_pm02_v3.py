@@ -17,3 +17,6 @@ class HolybroPM02v3:
     def read_current(self):
         voltage = self._current_adc.read_u16() * self._adc_scale
         return max(0.0, voltage - self._current_offset_v) * self._amps_per_volt
+
+    def read(self):
+        return self.read_voltage(), self.read_current()

@@ -14,10 +14,15 @@ CRSF_CHANNEL_VALUE_MAX = 1811
 
 FRAME_TYPE_GPS = 0x02
 FRAME_TYPE_BATTERY_SENSOR = 0x08
+FRAME_TYPE_BAROMETRIC_ALTITUDE = 0x09
 FRAME_TYPE_LINK_STATISTICS = 0x14
 FRAME_TYPE_RC_CHANNELS_PACKED = 0x16
 FRAME_TYPE_ATTITUDE = 0x1E
 FRAME_TYPE_FLIGHT_MODE = 0x21
+FRAME_TYPE_ARDUPILOT_TELEMETRY = 0x80
+STATUS_TEXT_SUBTYPE = 0xF1
+STATUS_WARNING = 4
+STATUS_INFO = 6
 
 
 def _crc8_table():
@@ -156,15 +161,35 @@ class SpeedyBeeNanoELRS(m.UART):
             raise ValueError("CRSF payload is too long")
         frame = bytes((frame_type,)) + payload
         crc = self._calculate_crc8(frame)
-        self.write(bytes((CRSF_SYNC_BYTE, length)) + frame + bytes((crc,)))
+        packet = bytes((CRSF_SYNC_BYTE, length)) + frame + bytes((crc,))
+        return self.write(packet) == len(packet)
 
-    def send_battery_sensor(self, voltage, current, capacity_mah):
-        voltage = max(0, min(int(voltage * 10), 0xFFFF))
-        current = max(0, min(int(current * 10), 0xFFFF))
+    def send_status_text(self, message, severity=STATUS_INFO):
+        if not 0 <= severity <= 7:
+            raise ValueError("Status severity must be between 0 and 7")
+        text = message.split("\x00", 1)[0].encode("utf-8")
+        limit = 49
+        while limit < len(text) and text[limit] & 0xC0 == 0x80:
+            limit -= 1
+        payload = bytes((STATUS_TEXT_SUBTYPE, severity)) + text[:limit] + b"\x00"
+        return self._send_packet(FRAME_TYPE_ARDUPILOT_TELEMETRY, payload)
+
+    def send_battery_sensor(self, voltage, current, capacity_mah, remaining_percent=0):
+        voltage = max(0, min(int(round(voltage * 10)), 0x7FFF))
+        current = max(-0x8000, min(int(round(current * 10)), 0x7FFF))
         capacity = max(0, min(int(capacity_mah), 0xFFFFFF))
-        payload = s.pack(">HH", voltage, current)
-        payload += bytes((capacity >> 16, (capacity >> 8) & 0xFF, capacity & 0xFF, 0))
-        self._send_packet(FRAME_TYPE_BATTERY_SENSOR, payload)
+        remaining = max(0, min(int(remaining_percent), 100))
+        payload = s.pack(">hh", voltage, current)
+        payload += bytes((capacity >> 16, (capacity >> 8) & 0xFF, capacity & 0xFF, remaining))
+        return self._send_packet(FRAME_TYPE_BATTERY_SENSOR, payload)
+
+    def send_barometric_altitude(self, altitude_m):
+        decimetres = int(round(altitude_m * 10))
+        if decimetres < 0x8000 - 10_000:
+            altitude = max(0, decimetres + 10_000)
+        else:
+            altitude = 0x8000 | min(0x7FFE, (decimetres + 5) // 10)
+        return self._send_packet(FRAME_TYPE_BAROMETRIC_ALTITUDE, s.pack(">H", altitude))
 
     def send_gps(self, latitude, longitude, altitude_m, satellites):
         lat = int(latitude * 1e7)
@@ -172,7 +197,7 @@ class SpeedyBeeNanoELRS(m.UART):
         alt = max(0, min(int(altitude_m) + 1000, 0xFFFF))
         satellites = max(0, min(int(satellites), 0xFF))
         payload = s.pack(">iiHHHB", lat, lon, 0, 0, alt, satellites)
-        self._send_packet(FRAME_TYPE_GPS, payload)
+        return self._send_packet(FRAME_TYPE_GPS, payload)
 
     def send_attitude(self, pitch_deg, roll_deg, yaw_deg):
         scale = math.pi / 180 * 10_000
@@ -180,7 +205,7 @@ class SpeedyBeeNanoELRS(m.UART):
             int(((angle + 180) % 360 - 180) * scale)
             for angle in (pitch_deg, roll_deg, yaw_deg)
         )
-        self._send_packet(FRAME_TYPE_ATTITUDE, s.pack(">hhh", *angles))
+        return self._send_packet(FRAME_TYPE_ATTITUDE, s.pack(">hhh", *angles))
 
     def send_flight_mode(self, mode_string):
-        self._send_packet(FRAME_TYPE_FLIGHT_MODE, mode_string.encode("ascii") + b"\x00")
+        return self._send_packet(FRAME_TYPE_FLIGHT_MODE, mode_string.encode("ascii") + b"\x00")

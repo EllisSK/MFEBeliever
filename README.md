@@ -10,6 +10,19 @@ Set the pin and bus assignments at the top of `main.py` and copy the project to 
 
 At startup, the program polls the configured receiver and sensors and prints readings once a second. The ESCs receive minimum throttle and the servos start with PWM duty set to zero. Feed the HC-SR04 echo pin through a 3.3 V-compatible signal path.
 
+With ExpressLRS telemetry enabled, discover the battery, GPS, barometric altitude, and flight-mode sensors in EdgeTX. Barometric altitude is relative to the first valid pressure reading after startup. Set `BATTERY_WARNING_V` to the minimum pack voltage for low-voltage warnings. Set `BATTERY_CAPACITY_MAH` for an estimated remaining percentage, which assumes a full pack at startup.
+
+Run the Yaapu widget with CRSF passthrough enabled on the T15 to display status text. Warnings also appear in the console. A lost-link warning can reach the handset after the link returns. [Yaapu setup](https://github.com/yaapu/FrskyTelemetryScript/wiki/Passthrough-over-CRSF-and-ExpressLRS)
+
+For ESC calibration, stop the monitor with Ctrl+C and run this from the MicroPython console.
+
+```python
+import main
+main.calibrate_esc("left")
+```
+
+Use `"right"` for the other ESC. Calibration prompts appear in the console and are mirrored to the handset. Confirm the steps at the console.
+
 ## Main Hardware:
 * SparkFun Thing Plus - RP2350
 * 2x Hobbywing X-Rotor Pro 50A ESC

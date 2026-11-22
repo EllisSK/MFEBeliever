@@ -32,11 +32,16 @@ class HobbywingXRotorPro(m.PWM):
         self.stop()
         t.sleep_ms(2500)
 
-    def calibrate(self):
-        input("Remove the propeller and disconnect ESC power, then press Enter. ")
+    def calibrate(self, guide=print):
+        self.stop()
         try:
+            guide("Remove the propeller and disconnect ESC power")
+            input("Press Enter when ready. ")
             self.set_speed(1.0)
-            input("Connect ESC power and press Enter after the calibration beeps. ")
+            guide("Connect ESC power and wait for calibration beeps")
+            input("Press Enter after the calibration beeps. ")
         finally:
             self.stop()
+        guide("Minimum throttle. Wait for ESC confirmation")
         t.sleep_ms(3000)
+        guide("ESC calibration sequence complete")
