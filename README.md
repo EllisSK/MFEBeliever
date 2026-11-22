@@ -6,7 +6,9 @@
 This repository contains micropython code required to operate the MFE believer UAV with the hardware specified below. Code handling hardware components is stored within the hardware directory, whilst any advanced software features (such as an autopilot) will be stored in the software directory.
 
 ## Usage:
-The project must be cloned directly onto the specificed microcontroller to function correctly.
+Set the pin and bus assignments at the top of `main.py` and copy the project to the RP2350 MicroPython filesystem. Leave unused devices set to `None`. The receiver and GNSS need separate UARTs. The IMU and barometer can share an I²C bus.
+
+At startup, the program polls the configured receiver and sensors and prints readings once a second. The ESCs receive minimum throttle and the servos start with PWM duty set to zero. Feed the HC-SR04 echo pin through a 3.3 V-compatible signal path.
 
 ## Main Hardware:
 * SparkFun Thing Plus - RP2350
